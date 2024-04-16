@@ -142,7 +142,7 @@ func TaprootWitnessSignature(tx *wire.MsgTx, sigHashes *TxSigHashes, idx int,
 // anywhere....
 func RawTxInTapscriptSignature(tx *wire.MsgTx, sigHashes *TxSigHashes, idx int,
 	amt int64, pkScript []byte, tapLeaf TapLeaf, hashType SigHashType,
-	privKey *btcec.PrivateKey) ([]byte, error) {
+	privKey *btcec.PrivateKey, signOpts ...schnorr.SignOption) ([]byte, error) {
 
 	// First, we'll start by compute the top-level taproot sighash.
 	tapLeafHash := tapLeaf.TapHash()
@@ -157,7 +157,7 @@ func RawTxInTapscriptSignature(tx *wire.MsgTx, sigHashes *TxSigHashes, idx int,
 
 	// With the sighash constructed, we can sign it with the specified
 	// private key.
-	signature, err := schnorr.Sign(privKey, sigHash)
+	signature, err := schnorr.Sign(privKey, sigHash, signOpts...)
 	if err != nil {
 		return nil, err
 	}
